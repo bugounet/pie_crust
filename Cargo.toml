@@ -1,0 +1,17 @@
+[workspace]
+members = ["crates/pie_crust-core", "crates/pie_crust-mcp", "crates/pie_crust-desktop"]
+default-members = ["crates/pie_crust-desktop"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.98"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "debuginfo"
+
+[profile.dev]
+debug = 1

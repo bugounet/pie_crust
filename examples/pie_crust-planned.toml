@@ -1,0 +1,104 @@
+# Contrat futur de configuration : les sections au-delà de search/index
+# ne sont pas encore interprétées. Utiliser pie_crust.toml pour le socle actuel.
+schema_version = 1
+
+[storage]
+# Chemin ancré au projet principal, commun aux worktrees enregistrés.
+root = ".pie_crust"
+index_file = "indexes/{worktree_id}.sqlite"
+worktree_registry = "worktrees.json"
+sessions_dir = "sessions"
+recovery_dir = "recovery"
+logs_dir = "logs"
+
+[python]
+interpreter = "auto"
+language_server = "ty"
+
+[search]
+respect_gitignore = true
+exclude = [".git/**", ".venv/**", "**/__pycache__/**", "generated/**"]
+
+[index]
+respect_gitignore = true
+exclude = [".git/**", ".venv/**", "**/__pycache__/**", "large_data/**"]
+
+[callers]
+policy = "explicit_annotations"
+require_annotated_signature = true
+accept_explicit_stubs = true
+allow_any = false
+allow_unknown = false
+
+[terminal]
+program = "auto"
+args = []
+cwd = "{workspace_root}"
+
+[[test_runners]]
+id = "pytest"
+adapter = "pytest"
+program = "{python}"
+args = ["-m", "pytest", "{node_id}"]
+cwd = "{workspace_root}"
+shell = false
+
+[[test_runners]]
+id = "django"
+adapter = "django"
+program = "{python}"
+args = ["manage.py", "test", "{test_dotted}"]
+cwd = "{workspace_root}"
+shell = false
+
+[[test_runners]]
+id = "custom"
+adapter = "pytest"
+program = "{python}"
+args = ["tools/run_test.py", "--file", "{file_path}", "--name", "{test_name}"]
+cwd = "{workspace_root}"
+shell = false
+
+[packages]
+manager = "auto"
+preferred_manager = "uv"
+preview_updates = true
+
+[migrations.django]
+mode = "static"
+open_file_on_node_click = true
+
+[migrations.alembic]
+mode = "static"
+heads_policy = "show_multiple"
+highlight_unmerged_heads = true
+open_file_on_node_click = true
+
+[[debug]]
+id = "django-launch"
+request = "launch"
+program = "manage.py"
+args = ["runserver", "--noreload"]
+cwd = "{workspace_root}"
+python = "{python}"
+
+[[debug]]
+id = "python-attach"
+request = "attach"
+host = "127.0.0.1"
+port = 5678
+
+[mcp]
+enabled = true
+host = "127.0.0.1"
+port = 43127
+path = "/mcp"
+# Le jeton est conservé dans la configuration locale de l’utilisateur,
+# hors du dépôt. Aucun secret ne figure dans ce fichier.
+
+[refactoring]
+scope = "typed_only"
+scan_untyped_usages = false
+preview = true
+reject_stale_plans = true
+# L’application autonome se configure localement, par client/opération.

@@ -1,0 +1,22 @@
+# Build outputs
+/target/
+/build/
+/dist/
+*.exe
+*.dll
+*.pdb
+
+# Local development tools and Python caches
+/.tools/
+__pycache__/
+*.py[cod]
+
+# Données locales de pie_crust ; .pie_crust/config.toml reste versionnable.
+.pie_crust/indexes/
+.pie_crust/sessions/
+.pie_crust/recovery/
+.pie_crust/scratches/
+.pie_crust/logs/
+.pie_crust/worktrees.json
+.pie_crust/worktrees.json.*
+.pie_crust/worktrees.lock

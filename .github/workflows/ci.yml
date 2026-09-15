@@ -1,0 +1,48 @@
+name: Build and test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-14, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust
+        run: rustup show
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+      - name: Lint
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Test
+        run: cargo test --workspace --locked
+      - name: Check optional OpenGL renderer
+        run: cargo check -p pie_crust-desktop --no-default-features --features renderer-glow --locked
+      - name: Build native application
+        run: cargo build --release --locked -p pie_crust-desktop
+      - name: Package macOS application
+        if: runner.os == 'macOS'
+        run: |
+          bash scripts/package-macos.sh
+          ditto -c -k --sequesterRsrc --keepParent dist/pie_crust.app dist/pie_crust-${{ matrix.os }}.zip
+      - name: Store Windows executable
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pie_crust-Windows-x64
+          path: target/release/crusty.exe
+      - name: Store macOS application
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pie_crust-${{ matrix.os }}
+          path: dist/pie_crust-${{ matrix.os }}.zip

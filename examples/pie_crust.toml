@@ -1,0 +1,16 @@
+# Configuration actuellement prise en charge par pie_crust.
+# À copier dans .pie_crust/config.toml à la racine principale du projet.
+
+[search]
+respect_gitignore = true
+exclude = ["**/.venv/**", "**/__pycache__/**", "**/.pytest_cache/**", "**/node_modules/**", "**/target/**", "generated/**"]
+
+[index]
+respect_gitignore = true
+exclude = ["**/.venv/**", "**/__pycache__/**", "**/.pytest_cache/**", "**/node_modules/**", "**/target/**", "large_data/**"]
+
+# generated reste indexable mais n'apparaît pas dans la recherche.
+# large_data reste recherchable par scan, sans contenu conservé dans l'index.
+# .pie_crust et .git sont toujours exclus des sources par le noyau.
+# Le stockage est .pie_crust/indexes/<worktree_id>.sqlite, un fichier par worktree.
+# Les paramètres futurs sont documentés dans pie_crust-planned.toml.
